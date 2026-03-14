@@ -1,0 +1,286 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-accent: hsl(var(--accent));
+  --color-destructive: hsl(var(--destructive));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-streak: hsl(var(--streak));
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+/* ============================================================================
+   HABITS-STYLE THEME — HSL-based, light/dark via .dark class
+   ============================================================================ */
+
+@layer base {
+  :root {
+    /* Light theme base: #F0F0F0 */
+    --background: 0 0% 94%;
+    --foreground: 30 10% 12%;
+
+    --card: 0 0% 96%;
+    --card-foreground: 30 10% 12%;
+
+    --popover: 0 0% 98%;
+    --popover-foreground: 30 10% 12%;
+
+    --primary: 30 10% 12%;
+    --primary-foreground: 0 0% 94%;
+
+    --secondary: 0 0% 92%;
+    --secondary-foreground: 30 10% 25%;
+
+    --muted: 0 0% 92%;
+    --muted-foreground: 30 5% 50%;
+
+    --accent: 0 0% 90%;
+    --accent-foreground: 30 10% 12%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 89%;
+    --input: 0 0% 89%;
+    --ring: 30 10% 12%;
+
+    --radius: 0.5rem;
+
+    /* Habit heatmap colors */
+    --heat-0: 0 0% 92%;
+    --heat-1: 142 40% 82%;
+    --heat-2: 142 45% 65%;
+    --heat-3: 142 50% 49%;
+    --heat-4: 142 55% 36%;
+    --streak: 25 95% 53%;
+
+    /* Todo workspace — map to habits palette (#F0F0F0 base) */
+    --app-bg: #F0F0F0;
+    --note-bg: #F0F0F0;
+    --workspace-card: #ffffff;
+    --note-text: hsl(30 10% 12%);
+    --note-text-muted: hsl(30 5% 50%);
+    --note-title: hsl(30 10% 12%);
+    --note-border: hsl(0 0% 89%);
+    --note-border-hover: hsl(0 0% 85%);
+    --note-scrollbar: #d1d5db;
+    --note-scrollbar-hover: #9ca3af;
+    --note-control-muted: hsl(30 5% 50%);
+    --note-control: hsl(30 10% 12%);
+    --note-control-subtle: hsl(30 5% 40%);
+    --note-control-bg-hover: hsl(0 0% 92%);
+    --note-control-bg-active: hsl(0 0% 89%);
+    --note-danger: hsl(0 72% 51%);
+    --note-danger-strong: hsl(0 72% 45%);
+    --note-danger-text: #ffffff;
+    --note-checkbox-border-unchecked: hsl(30 5% 50% / 0.45);
+    --note-checkbox-checked-border: hsl(30 10% 12%);
+    --note-checkbox-checked-bg: hsl(30 10% 12%);
+    --note-checkbox-tick: #ffffff;
+    --note-checkbox-hover-border: hsl(30 5% 40%);
+    --note-checkbox-hover-bg: hsl(30 5% 50% / 0.04);
+    --note-completed-text: hsl(30 5% 50% / 0.5);
+    --note-completed-line: hsl(30 5% 50% / 0.35);
+  }
+
+  .dark {
+    --background: 0 0% 9.4%;
+    --foreground: 0 0% 90%;
+
+    --card: 0 0% 11%;
+    --card-foreground: 0 0% 90%;
+
+    --popover: 0 0% 11%;
+    --popover-foreground: 0 0% 90%;
+
+    --primary: 0 0% 90%;
+    --primary-foreground: 0 0% 9.4%;
+
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 0 0% 70%;
+
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 55%;
+
+    --accent: 0 0% 16%;
+    --accent-foreground: 0 0% 90%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 0 0% 70%;
+
+    --heat-0: 0 0% 14%;
+    --heat-1: 142 30% 20%;
+    --heat-2: 142 35% 30%;
+    --heat-3: 142 40% 40%;
+    --heat-4: 142 45% 32%;
+    --streak: 25 95% 53%;
+
+    --app-bg: hsl(0 0% 9.4%);
+    --note-bg: hsl(0 0% 9.4%);
+    --workspace-card: hsl(0 0% 13%);
+    --note-text: hsl(0 0% 90%);
+    --note-text-muted: hsl(0 0% 55%);
+    --note-title: hsl(0 0% 90%);
+    --note-border: hsl(0 0% 18%);
+    --note-border-hover: hsl(0 0% 22%);
+    --note-scrollbar: #3f3f46;
+    --note-scrollbar-hover: #52525b;
+    --note-control-muted: hsl(0 0% 55%);
+    --note-control: hsl(0 0% 90%);
+    --note-control-subtle: hsl(0 0% 70%);
+    --note-control-bg-hover: hsl(0 0% 14%);
+    --note-control-bg-active: hsl(0 0% 18%);
+    --note-danger: hsl(0 62% 50%);
+    --note-danger-strong: hsl(0 62% 45%);
+    --note-danger-text: #ffffff;
+    --note-checkbox-border-unchecked: hsl(0 0% 70% / 0.45);
+    --note-checkbox-checked-border: hsl(0 0% 90%);
+    --note-checkbox-checked-bg: hsl(0 0% 90%);
+    --note-checkbox-tick: #111111;
+    --note-checkbox-hover-border: hsl(0 0% 70%);
+    --note-checkbox-hover-bg: hsl(0 0% 70% / 0.05);
+    --note-completed-text: hsl(0 0% 70% / 0.5);
+    --note-completed-line: hsl(0 0% 70% / 0.35);
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Inter', system-ui, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.15);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.35);
+  }
+}
+
+/* ============================================================================
+   TODO WORKSPACE COMPONENTS
+   ============================================================================ */
+
+.todo-checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  min-height: 14px;
+  border-radius: 3px;
+  border: 1.5px solid var(--note-checkbox-border-unchecked);
+  background-color: transparent;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.todo-checkbox.checked {
+  border-color: var(--note-checkbox-checked-border);
+  background-color: var(--note-checkbox-checked-bg);
+}
+
+.todo-checkbox:hover:not(.checked):not([disabled]) {
+  border-color: var(--note-checkbox-hover-border);
+  background-color: var(--note-checkbox-hover-bg);
+}
+
+.todo-input.completed {
+  text-decoration: line-through;
+  color: var(--note-completed-text);
+}
+
+.section-title {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+/* ============================================================================
+   VIEW PAGER — CSS Scroll Snap (native swipe between Habits / To-dos)
+   ============================================================================ */
+
+.view-pager {
+  display: flex;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.view-pager::-webkit-scrollbar {
+  display: none;
+}
+
+.view-pager {
+  scrollbar-width: none;
+}
+
+.view-page {
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 100%;
+  height: 100%;
+  overflow: hidden;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* ============================================================================
+   ANIMATIONS
+   ============================================================================ */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.1s ease-out forwards;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "com.ayumi.app",
+  "productName": "Ayumi",
+  "executableName": "Ayumi",
+  "copyright": "Copyright © 2026 cletus",
+
+  "extraMetadata": {
+    "name": "Ayumi",
+    "productName": "Ayumi",
+    "description": "A minimalist habit tracker and to-do app"
+  },
+  "directories": {
+    "output": "release",
+    "buildResources": "build"
+  },
+
+  "files": [
+    "dist/**/*",
+    "build/**/*"
+  ],
+
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      }
+    ],
+    "icon": "build/icon.ico",
+    "artifactName": "${productName}-${version}-Setup.${ext}",
+    "signAndEditExecutable": true
+  },
+
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "deleteAppDataOnUninstall": false,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "Ayumi"
+  },
+
+  "publish": {
+    "provider": "github",
+    "owner": "calledforth",
+    "repo": "ayumi",
+    "releaseType": "release"
+  },
+
+  "electronDownload": {
+    "cache": ".cache/electron"
+  }
+}
