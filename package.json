@@ -2,7 +2,7 @@
   "name": "ayumi",
   "productName": "Ayumi",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A minimalist habit tracker and to-do app",
   "author": "cletus",
   "license": "MIT",
