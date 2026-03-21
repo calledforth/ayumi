@@ -3,8 +3,10 @@ import { Titlebar } from './components/titlebar/Titlebar';
 import { AppViewDock } from './components/shell/AppViewDock';
 import { HabitTracker } from './components/habits/HabitTracker';
 import { TodoWorkspace } from './components/todo/TodoWorkspace';
+import { UpdateToast } from './components/updater/UpdateToast';
 import { useNavigationStore, type AppView } from './stores/navigationStore';
 import { useThemeStore, applyTheme } from './stores/themeStore';
+import './types/electron.d';
 
 const VIEW_ORDER: AppView[] = ['habits', 'todos'];
 
@@ -79,6 +81,7 @@ export default function App() {
       </div>
 
       <AppViewDock />
+      <UpdateToast />
     </div>
   );
 }

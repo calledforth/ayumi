@@ -19,12 +19,12 @@ interface ElectronAPI {
     checkForUpdates: () => Promise<void>;
     downloadUpdate: () => Promise<void>;
     quitAndInstall: () => Promise<void>;
-    onCheckingForUpdate: (callback: () => void) => void;
-    onUpdateAvailable: (callback: (info: { version: string }) => void) => void;
-    onUpdateNotAvailable: (callback: () => void) => void;
-    onDownloadProgress: (callback: (percent: number) => void) => void;
-    onUpdateDownloaded: (callback: () => void) => void;
-    onError: (callback: (error: string) => void) => void;
+    onCheckingForUpdate: (callback: () => void) => () => void;
+    onUpdateAvailable: (callback: (info: { version: string }) => void) => () => void;
+    onUpdateNotAvailable: (callback: () => void) => () => void;
+    onDownloadProgress: (callback: (percent: number) => void) => () => void;
+    onUpdateDownloaded: (callback: () => void) => () => void;
+    onError: (callback: (error: string) => void) => () => void;
   };
 }
 

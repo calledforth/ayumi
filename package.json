@@ -6,6 +6,10 @@
   "description": "A minimalist habit tracker and to-do app",
   "author": "cletus",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/calledforth/ayumi.git"
+  },
   "main": "dist/main/main.js",
   "scripts": {
     "dev": "concurrently \"bun run dev:vite\" \"bun run dev:electron\"",
