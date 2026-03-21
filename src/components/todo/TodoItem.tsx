@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Star } from 'lucide-react';
 
@@ -17,19 +17,22 @@ interface TodoItemProps {
   sectionLabel?: string;
 }
 
-export function TodoItem({
-  id,
-  text,
-  completed,
-  daily = false,
-  onToggle,
-  onUpdate,
-  onDelete,
-  onAddBelow,
-  autoFocus = false,
-  readOnly = false,
-  onToggleDaily,
-}: TodoItemProps) {
+export const TodoItem = forwardRef<HTMLDivElement, TodoItemProps>(function TodoItem(
+  {
+    id,
+    text,
+    completed,
+    daily = false,
+    onToggle,
+    onUpdate,
+    onDelete,
+    onAddBelow,
+    autoFocus = false,
+    readOnly = false,
+    onToggleDaily,
+  },
+  ref
+) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -57,6 +60,7 @@ export function TodoItem({
 
   return (
     <motion.div
+      ref={ref}
       initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -8, transition: { duration: 0.15 } }}
@@ -65,7 +69,7 @@ export function TodoItem({
       {/* Checkbox */}
       <motion.button
         onClick={() => !readOnly && onToggle(id)}
-        className={`todo-checkbox flex-shrink-0 mt-0.5 ${completed ? 'checked' : ''} ${readOnly ? 'cursor-default opacity-60' : ''}`}
+        className={`todo-checkbox flex-shrink-0 mt-0.5 ${completed ? 'checked' : ''} ${readOnly ? 'cursor-default opacity-60' : 'cursor-pointer'}`}
         disabled={readOnly}
       >
         <AnimatePresence>
@@ -86,7 +90,7 @@ export function TodoItem({
       <div className="flex-1 min-w-0">
         {readOnly ? (
           <span
-            className={`text-sm leading-relaxed ${completed ? 'line-through text-(--note-text-muted)' : 'text-(--note-text)'}`}
+            className={`text-[15px] leading-relaxed ${completed ? 'line-through text-(--note-text-muted)' : 'text-(--note-text)'}`}
           >
             {text}
           </span>
@@ -98,14 +102,14 @@ export function TodoItem({
             onKeyDown={handleKeyDown}
             placeholder="Type something..."
             rows={1}
-            className={`todo-input text-xs leading-relaxed resize-none overflow-hidden bg-transparent border-none outline-none w-full text-(--note-text) placeholder:text-(--note-text-muted) ${completed ? 'line-through text-(--note-completed-text)' : ''}`}
+            className={`todo-input text-sm leading-relaxed resize-none overflow-hidden bg-transparent border-none outline-none w-full text-(--note-text) placeholder:text-(--note-text-muted) ${completed ? 'line-through text-(--note-completed-text)' : ''}`}
           />
         )}
       </div>
 
       {/* Daily toggle */}
       {onToggleDaily && (
-        <button onClick={onToggleDaily} className="flex-shrink-0 mt-0.5 transition-colors">
+        <button onClick={onToggleDaily} className="flex-shrink-0 mt-0.5 transition-colors cursor-pointer">
           <Star
             className={`w-3 h-3 transition-colors ${
               daily ? 'text-amber-400 fill-amber-400' : 'text-(--note-control-subtle) hover:text-(--note-control-muted)'
@@ -115,4 +119,4 @@ export function TodoItem({
       )}
     </motion.div>
   );
-}
+});

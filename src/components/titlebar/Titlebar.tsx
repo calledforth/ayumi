@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Minus, Square, X, Sun, Moon, Monitor } from 'lucide-react';
-import { useNavigationStore, type AppView } from '@/stores/navigationStore';
 import { useThemeStore, type ThemeMode } from '@/stores/themeStore';
 
 export function Titlebar() {
   const [isMaximized, setIsMaximized] = useState(false);
-  const { currentView, setView } = useNavigationStore();
   const { themeMode, setThemeMode } = useThemeStore();
 
   useEffect(() => {
@@ -29,13 +27,6 @@ export function Titlebar() {
   };
   const handleClose = () => window.electronAPI?.windowControls.close();
 
-  const tabClass = (view: AppView) =>
-    `px-2 py-0.5 text-[11px] font-medium transition-colors rounded ${
-      currentView === view
-        ? 'text-foreground'
-        : 'text-muted-foreground hover:text-foreground'
-    }`;
-
   const themeOptions: { mode: ThemeMode; icon: typeof Sun; label: string }[] = [
     { mode: 'light', icon: Sun, label: 'Light' },
     { mode: 'system', icon: Monitor, label: 'System' },
@@ -44,33 +35,14 @@ export function Titlebar() {
 
   return (
     <div
-      className="h-7 flex items-center justify-between select-none shrink-0 relative"
+      className="h-6 flex items-center justify-end select-none shrink-0 relative"
       style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
     >
-      {/* App title - left */}
-      <div className="pl-3 w-[72px] shrink-0">
-        <span className="text-[11px] font-medium text-muted-foreground tracking-wide lowercase">
-          ayumi
-        </span>
-      </div>
-
-      {/* Center: Habits | To-dos */}
-      <div
-        className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1"
-        style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
-      >
-        <button onClick={() => setView('habits')} className={tabClass('habits')}>
-          Habits
-        </button>
-        <span className="text-border text-[10px]">|</span>
-        <button onClick={() => setView('todos')} className={tabClass('todos')}>
-          To-dos
-        </button>
-      </div>
+      <div className="flex-1 min-h-0 min-w-0 h-full" aria-hidden />
 
       {/* Theme toggle + Window controls */}
       <div
-        className="flex items-center h-full"
+        className="flex items-center h-full shrink-0"
         style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
       >
         {/* Habits-style theme toggle */}

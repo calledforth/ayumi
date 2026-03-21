@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Titlebar } from './components/titlebar/Titlebar';
+import { AppViewDock } from './components/shell/AppViewDock';
 import { HabitTracker } from './components/habits/HabitTracker';
 import { TodoWorkspace } from './components/todo/TodoWorkspace';
 import { useNavigationStore, type AppView } from './stores/navigationStore';
@@ -64,7 +65,7 @@ export default function App() {
   }, [setView]);
 
   return (
-    <div className="h-screen flex flex-col bg-background overflow-hidden transition-colors">
+    <div className="h-screen flex flex-col bg-background overflow-hidden transition-colors relative">
       <Titlebar />
 
       {/* CSS Scroll Snap view pager — native swipe, content follows finger */}
@@ -76,6 +77,8 @@ export default function App() {
           <TodoWorkspace />
         </div>
       </div>
+
+      <AppViewDock />
     </div>
   );
 }

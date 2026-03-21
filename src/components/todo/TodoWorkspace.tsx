@@ -1,19 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Archive, Plus } from 'lucide-react';
-import { format, getDate } from 'date-fns';
 import { useTodoStore } from '@/stores/todoStore';
 import { TodoItem } from './TodoItem';
-
-function ordinalSuffix(day: number) {
-  if (day > 3 && day < 21) return 'th';
-  switch (day % 10) {
-    case 1: return 'st';
-    case 2: return 'nd';
-    case 3: return 'rd';
-    default: return 'th';
-  }
-}
 
 export function TodoWorkspace() {
   const {
@@ -35,7 +24,6 @@ export function TodoWorkspace() {
   } = useTodoStore();
 
   const [archiveOpen, setArchiveOpen] = useState(false);
-  const [newInput, setNewInput] = useState('');
   const [focusNewTodo, setFocusNewTodo] = useState<string | null>(null);
   const [creatingSectionInSidebar, setCreatingSectionInSidebar] = useState(false);
   const [sidebarSectionName, setSidebarSectionName] = useState('');
@@ -55,36 +43,16 @@ export function TodoWorkspace() {
   const isArchivedSection = viewedSection?.archived ?? false;
 
   useEffect(() => {
-    if (isLoaded && isViewingSection && !viewedSection) {
-      setLastView('today');
-    }
-  }, [isLoaded, isViewingSection, viewedSection, setLastView]);
+    if (!isLoaded) return;
+    if (isViewingSection && !viewedSection) setLastView('today');
+    // Normalize legacy view ids (tomorrow, thisWeek, nextWeek) -> today or all
+    else if (activeView === 'tomorrow') setLastView('today');
+    else if (activeView === 'thisWeek' || activeView === 'nextWeek') setLastView('all');
+  }, [isLoaded, isViewingSection, viewedSection, activeView, setLastView]);
 
   const dailyBySection = activeSections
     .map((s) => ({ id: s.id, title: s.title, todos: s.todos.filter((t) => t.daily) }))
     .filter((g) => g.todos.length > 0);
-
-  const today = new Date();
-  const dayName = format(today, 'EEEE');
-  const dayNum = getDate(today);
-  const monthName = format(today, 'MMMM');
-
-  const handleAdd = async () => {
-    if (!newInput.trim()) return;
-    if (isViewingSection && viewedSection && !isArchivedSection) {
-      const newId = await addTodo(viewedSection.id);
-      updateTodo(viewedSection.id, newId, newInput.trim());
-      setNewInput('');
-    } else if (!isViewingSection) {
-      const sectionId = await addSection(newInput.trim());
-      setLastView(sectionId);
-      setNewInput('');
-    }
-  };
-
-  const handleInputKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') handleAdd();
-  };
 
   const handleAddTodoBelow = async (todoId: string) => {
     if (!viewedSection) return;
@@ -114,58 +82,20 @@ export function TodoWorkspace() {
     );
   }
 
-  const inputPlaceholder =
-    isViewingSection && viewedSection && !isArchivedSection
-      ? 'Add new task'
-      : 'Create new section';
-
   return (
-    <div className="h-full flex flex-col bg-(--app-bg)">
-      {/* ── Top: Date + Input ────────────────────────────────── */}
-      <div className="shrink-0 flex flex-col items-center pt-8 pb-5 px-8">
-        <h1 className="text-[2.75rem] font-bold tracking-tight leading-none select-none">
-          <span className="text-(--note-text)">
-            {dayName} {dayNum}
-            {ordinalSuffix(dayNum)},
-          </span>{' '}
-          <span className="text-(--note-text-muted)">{monthName}</span>
-        </h1>
-
-        <div className="mt-4 w-full max-w-lg relative">
-          <input
-            type="text"
-            value={newInput}
-            onChange={(e) => setNewInput(e.target.value)}
-            onKeyDown={handleInputKeyDown}
-            placeholder={inputPlaceholder}
-            className="w-full bg-(--workspace-card) rounded-xl px-5 py-3 text-sm shadow-sm outline-none border-none text-(--note-text) placeholder:text-(--note-text-muted)/60"
-          />
-          <button
-            onClick={handleAdd}
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center text-(--note-text-muted) hover:text-(--note-text) transition-colors rounded"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
-      {/* ── Main card ────────────────────────────────────────── */}
-      <div className="flex-1 min-h-0 mx-12 mb-6 flex bg-(--workspace-card) rounded-2xl shadow-sm overflow-hidden">
+    <div className="h-full flex flex-col bg-(--app-bg) overflow-hidden">
+      {/* ── Full-page: Sidebar + Content (like habits) ─────────── */}
+      <div className="flex-1 min-h-0 flex overflow-hidden">
         {/* ── Sidebar ─────────────────────────────────────── */}
-        <div className="w-[200px] shrink-0 pt-8 pl-8 pr-4 flex flex-col justify-between pb-8 overflow-hidden">
+        <div className="w-[240px] shrink-0 pt-[20px] pl-5 pr-4 flex flex-col justify-between pb-5 overflow-hidden">
           {/* Sliding container */}
           <div
-            className="transition-transform duration-250 ease-out"
+            className="relative transition-transform duration-250 ease-out"
             style={{
               transform: archiveOpen ? 'translateX(-220px)' : 'translateX(0)',
             }}
           >
-            {/* Profile placeholder */}
-            <div className="w-10 h-10 rounded-full bg-neutral-700 text-white flex items-center justify-center font-semibold text-sm mb-6 select-none">
-              C
-            </div>
-
-            {/* Navigation */}
+            {/* Navigation — clean, no profile, per reference design */}
             <nav className="flex flex-col gap-0.5">
               <SidebarButton
                 active={activeView === 'today' && !archiveOpen}
@@ -186,10 +116,6 @@ export function TodoWorkspace() {
               >
                 All
               </SidebarButton>
-
-              {activeSections.length > 0 && (
-                <div className="h-px bg-(--note-border) my-2 mr-2" />
-              )}
 
               {activeSections.map((section) => (
                 <SidebarButton
@@ -223,12 +149,12 @@ export function TodoWorkspace() {
                     setSidebarSectionName('');
                   }}
                   placeholder="Section name…"
-                  className="text-[14px] px-2 py-0.5 bg-transparent outline-none text-(--note-text) placeholder:text-(--note-text-muted) font-medium rounded-md"
+                  className="text-[14px] px-2 py-0.5 w-full bg-transparent outline-none text-(--note-text) placeholder:text-(--note-text-muted) font-medium rounded-full"
                 />
               ) : (
                 <button
                   onClick={() => setCreatingSectionInSidebar(true)}
-                  className="text-left text-[14px] text-(--note-text-muted)/50 hover:text-(--note-text-muted) py-0.5 px-2 transition-colors font-medium"
+                  className="text-left text-[14px] font-medium py-0.5 px-2 rounded-full text-(--note-text-muted) hover:text-(--note-text) transition-colors w-full cursor-pointer"
                 >
                   + New section
                 </button>
@@ -237,12 +163,12 @@ export function TodoWorkspace() {
 
             {/* Archive panel (offset right, slides in) */}
             <div
-              className="absolute top-8 left-8 right-4 bottom-8 flex flex-col"
+              className="absolute top-0 left-5 right-3 bottom-5 flex flex-col"
               style={{ transform: 'translateX(220px)' }}
             >
               <button
                 onClick={() => setArchiveOpen(false)}
-                className="text-left text-[11px] font-semibold text-(--note-text-muted) uppercase tracking-wider mb-3 px-2 hover:text-(--note-text) transition-colors duration-100"
+                className="text-left text-[11px] font-semibold text-(--note-text-muted) uppercase tracking-wider mb-3 px-2 hover:text-(--note-text) transition-colors duration-100 cursor-pointer"
               >
                 ← Back
               </button>
@@ -273,7 +199,7 @@ export function TodoWorkspace() {
           {/* Archive toggle — always visible at bottom */}
           <button
             onClick={() => setArchiveOpen(!archiveOpen)}
-            className={`w-8 h-8 flex items-center justify-center rounded-md transition-all duration-100 ${
+            className={`w-8 h-8 flex items-center justify-center rounded-md transition-all duration-100 cursor-pointer ${
               archiveOpen
                 ? 'bg-accent text-(--note-text)'
                 : 'text-(--note-text-muted) hover:text-(--note-text) hover:bg-accent/60'
@@ -284,9 +210,10 @@ export function TodoWorkspace() {
           </button>
         </div>
 
-        {/* ── Content area ────────────────────────────────── */}
-        <div className="flex-1 overflow-y-auto py-8 px-8">
-          <AnimatePresence mode="wait">
+        {/* ── Content area — padded + max-width to sit slightly centered ── */}
+        <div className="flex-1 overflow-y-auto pt-5 pb-14 px-5 md:px-8">
+          <div className="mx-auto w-full max-w-4xl">
+            <AnimatePresence mode="wait">
             {activeView === 'today' && !archiveOpen ? (
               <motion.div
                 key="today"
@@ -369,7 +296,8 @@ export function TodoWorkspace() {
             ) : (
               <EmptyState message="Select a view" />
             )}
-          </AnimatePresence>
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </div>
@@ -394,10 +322,10 @@ function SidebarButton({
   return (
     <button
       onClick={onClick}
-      className={`group text-left text-[15px] font-semibold py-0.5 px-2 rounded-md transition-all duration-100 relative ${
+      className={`group text-left text-[14px] py-0.5 px-2 rounded-full transition-colors duration-100 relative cursor-pointer ${
         active
-          ? 'text-(--note-text) bg-accent'
-          : 'text-(--note-text-muted) hover:text-(--note-text) hover:bg-accent/60'
+          ? 'text-(--note-text) font-semibold'
+          : 'text-(--note-text-muted) font-medium hover:text-(--note-text)'
       }`}
     >
       <span className="truncate block pr-6">{children}</span>
@@ -433,16 +361,16 @@ function TaskRow({
 }) {
   return (
     <div
-      className={`flex items-center py-2.5 border-b border-(--note-border)/30 last:border-b-0 ${
+      className={`flex items-center py-2.5 border-b border-(--note-border)/20 last:border-b-0 ${
         onClick ? 'cursor-pointer' : ''
       }`}
       onClick={onClick}
     >
-      <span className="w-[170px] shrink-0 text-[14px] text-(--note-text-muted) tracking-tight">
+      <span className="w-[170px] shrink-0 text-[15px] text-(--note-text-muted) tracking-tight">
         {category}
       </span>
       <span
-        className={`flex-1 text-[14px] font-medium tracking-tight ${
+        className={`flex-1 text-[15px] font-medium tracking-tight ${
           completed
             ? 'line-through text-(--note-text-muted)'
             : 'text-(--note-text)'
@@ -562,7 +490,7 @@ function SectionPageView({
       {!readOnly && (
         <motion.button
           onClick={onAddTodo}
-          className="flex items-center gap-1.5 text-(--note-text-muted) hover:text-(--note-text) transition-colors mt-3 py-0.5 text-xs"
+          className="flex items-center gap-1.5 text-(--note-text-muted) hover:text-(--note-text) transition-colors mt-3 py-0.5 text-xs cursor-pointer"
           whileHover={{ x: 2 }}
         >
           <Plus className="w-3 h-3" />
