@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "echo API-only deploy: skipping frontend build",
   "functions": {
     "api/**/*.js": {
       "maxDuration": 30
