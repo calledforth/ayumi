@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { db } from '@/services/neon';
 import { format } from 'date-fns';
+import { initializeTodoRealtime } from '@/services/realtime';
 
 // ============================================================================
 // TYPES
@@ -42,6 +43,8 @@ const generateId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 9)
 // ============================================================================
 
 const debounceTimers = new Map<string, ReturnType<typeof setTimeout>>();
+let realtimeUnsubscribe: (() => void) | null = null;
+let realtimeRefreshTimer: ReturnType<typeof setTimeout> | null = null;
 
 function debouncedSync(key: string, fn: () => Promise<void>, ms = 500) {
   const existing = debounceTimers.get(key);
@@ -137,6 +140,15 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
     } catch { /* ignore if not in electron */ }
 
     set({ sections, history, lastView, isLoaded: true });
+
+    if (!realtimeUnsubscribe) {
+      realtimeUnsubscribe = initializeTodoRealtime(() => {
+        if (realtimeRefreshTimer) clearTimeout(realtimeRefreshTimer);
+        realtimeRefreshTimer = setTimeout(() => {
+          get().load().catch((err) => console.error('[Realtime] reload failed:', err));
+        }, 250);
+      });
+    }
   },
 
   setLastView: (view: TodoView) => {
